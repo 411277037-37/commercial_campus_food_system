@@ -73,7 +73,7 @@ export default function StudentPage({
       <aside className={`student-drawer ${drawerOpen ? "open" : ""}`}>
         <div className="drawer-brand">
           <h2>歸燕食堂</h2>
-          <p>校園快速預點餐系統</p>
+          
 
           {currentStudent && (
             <p className="student-login-info">
@@ -126,8 +126,7 @@ export default function StudentPage({
         <header className="hero" id="home">
           <div className="hero-text">
             <h1>歸燕食堂</h1>
-            <p>快速預點餐，減少等待時間</p>
-
+            
             {currentStudent && (
               <p className="student-login-info">
                 目前登入：{currentStudent.nickname || currentStudent.studentId}
