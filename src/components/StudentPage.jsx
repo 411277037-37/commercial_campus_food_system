@@ -43,6 +43,21 @@ export default function StudentPage({
     }, 120);
   };
 
+  const scrollToShop = (shopName) => {
+    closeDrawer();
+
+    setTimeout(() => {
+      const target = document.getElementById(`shop-${shopName}`);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 120);
+  };
+
   if (showProfile) {
     return (
       <StudentProfile
@@ -73,7 +88,6 @@ export default function StudentPage({
       <aside className={`student-drawer ${drawerOpen ? "open" : ""}`}>
         <div className="drawer-brand">
           <h2>歸燕食堂</h2>
-          
 
           {currentStudent && (
             <p className="student-login-info">
@@ -126,7 +140,7 @@ export default function StudentPage({
         <header className="hero" id="home">
           <div className="hero-text">
             <h1>歸燕食堂</h1>
-            
+
             {currentStudent && (
               <p className="student-login-info">
                 目前登入：{currentStudent.nickname || currentStudent.studentId}
@@ -174,27 +188,42 @@ export default function StudentPage({
               </div>
 
               <div className="category-row">
-                <button className="category-chip">
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("早餐店")}
+                >
                   <span className="category-icon">🍳</span>
                   <span>早餐</span>
                 </button>
 
-                <button className="category-chip">
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("飲料店")}
+                >
                   <span className="category-icon">🥤</span>
                   <span>飲料</span>
                 </button>
 
-                <button className="category-chip">
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("丼飯")}
+                >
                   <span className="category-icon">🍚</span>
                   <span>丼飯</span>
                 </button>
 
-                <button className="category-chip">
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("鍋燒")}
+                >
                   <span className="category-icon">🍲</span>
                   <span>鍋燒</span>
                 </button>
 
-                <button className="category-chip">
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("關東煮")}
+                >
                   <span className="category-icon">🍢</span>
                   <span>關東煮</span>
                 </button>
@@ -269,6 +298,7 @@ export default function StudentPage({
               <div className="shop-grid">
                 {shops.map((shop) => (
                   <div
+                    id={`shop-${shop.name}`}
                     className="shop-card"
                     key={shop.id}
                     onClick={() => setSelectedShop(shop)}

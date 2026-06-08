@@ -19,7 +19,22 @@ export default function App() {
   const [shops, setShops] = useState(() => {
     const savedShops = localStorage.getItem("shops");
 
-    return savedShops ? JSON.parse(savedShops) : shopsData;
+    if (!savedShops) {
+      return shopsData;
+    }
+
+    const parsedShops = JSON.parse(savedShops);
+
+    return parsedShops.map((savedShop) => {
+      const originalShop = shopsData.find(
+        (shop) => shop.id === savedShop.id
+      );
+
+      return {
+        ...savedShop,
+        image: originalShop?.image || savedShop.image,
+      };
+    });
   });
 
   const [selectedShop, setSelectedShop] = useState(null);
