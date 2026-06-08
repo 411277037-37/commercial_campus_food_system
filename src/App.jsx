@@ -1,4 +1,13 @@
 import { useEffect, useState } from "react";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+
+import { db } from "./firebase";
 import LoginPage from "./components/LoginPage";
 import StudentPage from "./components/StudentPage";
 import VendorPage from "./components/VendorPage";
@@ -39,11 +48,7 @@ export default function App() {
 
   const [selectedShop, setSelectedShop] = useState(null);
 
-  const [orders, setOrders] = useState(() => {
-    const savedOrders = localStorage.getItem("orders");
-
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
+  const [orders, setOrders] = useState([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [pickupTime, setPickupTime] = useState("");
@@ -56,8 +61,22 @@ export default function App() {
   const [showMyOrders, setShowMyOrders] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("orders", JSON.stringify(orders));
-  }, [orders]);
+    const q = query(
+      collection(db, "orders"),
+      orderBy("createdAt", "asc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const firebaseOrders = snapshot.docs.map((docItem) => ({
+        firebaseId: docItem.id,
+        ...docItem.data(),
+      }));
+
+      setOrders(firebaseOrders);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("shops", JSON.stringify(shops));
@@ -123,7 +142,7 @@ export default function App() {
     setSelectedShop(updatedShop);
   };
 
-  const submitOrder = () => {
+  const submitOrder = async () => {
     if (!selectedShop) return;
 
     if (!currentStudent) {
@@ -183,8 +202,13 @@ export default function App() {
       completedAt: null,
     };
 
-    setOrders((prev) => [...prev, newOrder]);
-    setShowConfirm(true);
+    try {
+      await addDoc(collection(db, "orders"), newOrder);
+      setShowConfirm(true);
+    } catch (error) {
+      console.error("新增訂單失敗：", error);
+      alert("訂單送出失敗，請稍後再試");
+    }
   };
 
   if (page === "login") {

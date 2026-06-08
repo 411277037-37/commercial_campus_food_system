@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import VendorReviews from "./VendorReviews";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const vendorAccounts = [
   {
@@ -176,22 +178,22 @@ export default function VendorPage({
     return Object.values(map).sort((a, b) => b.qty - a.qty);
   }, [completedOrders]);
 
-  const updateOrderStatus = (orderId, status) => {
-    setOrders((prev) =>
-      prev.map((order) => {
-        if (order.id !== orderId) return order;
+  const updateOrderStatus = async (orderId, status) => {
+    const targetOrder = orders.find((order) => order.id === orderId);
 
-        return {
-          ...order,
-          status,
-          isNew: false,
-          completedAt:
-            status === "已完成"
-              ? new Date().toISOString()
-              : order.completedAt,
-        };
-      })
-    );
+    if (!targetOrder?.firebaseId) {
+      alert("找不到 Firebase 訂單資料");
+      return;
+    }
+
+    await updateDoc(doc(db, "orders", targetOrder.firebaseId), {
+      status,
+      isNew: false,
+      completedAt:
+        status === "已完成"
+          ? new Date().toISOString()
+          : targetOrder.completedAt,
+    });
   };
 
   const renderOrderCard = (order) => {
