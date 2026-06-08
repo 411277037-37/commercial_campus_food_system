@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 dist/
 src.zip
+public/videos/cpbl67.mp4
+src/components/EasterEgg67.jsx
