@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import {
   collection,
   addDoc,
+  setDoc,
+  doc,
   onSnapshot,
   query,
   orderBy,
@@ -20,31 +22,10 @@ export default function App() {
   const [currentStudent, setCurrentStudent] = useState(() => {
     const savedStudent = localStorage.getItem("currentStudent");
 
-    return savedStudent
-      ? JSON.parse(savedStudent)
-      : null;
+    return savedStudent ? JSON.parse(savedStudent) : null;
   });
 
-  const [shops, setShops] = useState(() => {
-    const savedShops = localStorage.getItem("shops");
-
-    if (!savedShops) {
-      return shopsData;
-    }
-
-    const parsedShops = JSON.parse(savedShops);
-
-    return parsedShops.map((savedShop) => {
-      const originalShop = shopsData.find(
-        (shop) => shop.id === savedShop.id
-      );
-
-      return {
-        ...savedShop,
-        image: originalShop?.image || savedShop.image,
-      };
-    });
-  });
+  const [shops, setShops] = useState(shopsData);
 
   const [selectedShop, setSelectedShop] = useState(null);
 
@@ -79,8 +60,40 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("shops", JSON.stringify(shops));
-  }, [shops]);
+    const unsubscribe = onSnapshot(collection(db, "shops"), async (snapshot) => {
+      if (snapshot.empty) {
+        await Promise.all(
+          shopsData.map((shop) =>
+            setDoc(doc(db, "shops", String(shop.id)), {
+              ...shop,
+              image: "",
+            })
+          )
+        );
+
+        return;
+      }
+
+      const firebaseShops = snapshot.docs.map((docItem) => {
+        const data = docItem.data();
+
+        const originalShop = shopsData.find(
+          (shop) => shop.id === data.id
+        );
+
+        return {
+          ...data,
+          image: originalShop?.image || data.image,
+        };
+      });
+
+      setShops(
+        firebaseShops.sort((a, b) => a.id - b.id)
+      );
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(
@@ -100,6 +113,31 @@ export default function App() {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
+
+  useEffect(() => {
+    if (!selectedShop) return;
+
+    const latestShop = shops.find(
+      (shop) => shop.id === selectedShop.id
+    );
+
+    if (latestShop) {
+      setSelectedShop(latestShop);
+    }
+  }, [shops]);
+
+  const updateShops = async (newShops) => {
+    setShops(newShops);
+
+    await Promise.all(
+      newShops.map((shop) =>
+        setDoc(doc(db, "shops", String(shop.id)), {
+          ...shop,
+          image: "",
+        })
+      )
+    );
+  };
 
   const openMyOrders = () => {
     setShowMyOrders(true);
@@ -226,7 +264,7 @@ export default function App() {
       <VendorPage
         setPage={setPage}
         shops={shops}
-        setShops={setShops}
+        setShops={updateShops}
         orders={orders}
         setOrders={setOrders}
         vendorShopId={vendorShopId}
@@ -265,7 +303,7 @@ export default function App() {
           decreaseQty={decreaseQty}
           submitOrder={submitOrder}
           setShowMyOrders={openMyOrders}
-          setShops={setShops}
+          setShops={updateShops}
           currentStudent={currentStudent}
           setCurrentStudent={setCurrentStudent}
         />
