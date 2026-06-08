@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "chart.js": "^4.5.1",
+    "firebase": "^12.14.0",
     "lucide-react": "^0.469.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.3.1",
