@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 
 import { Bar, Pie } from "react-chartjs-2";
+
 ChartJS.register(
   ArcElement,
   BarElement,
@@ -23,31 +24,11 @@ ChartJS.register(
 );
 
 const vendorAccounts = [
-  {
-    shopId: 1,
-    username: "oden",
-    password: "1234",
-  },
-  {
-    shopId: 2,
-    username: "don",
-    password: "1234",
-  },
-  {
-    shopId: 3,
-    username: "breakfast",
-    password: "1234",
-  },
-  {
-    shopId: 4,
-    username: "drink",
-    password: "1234",
-  },
-  {
-    shopId: 5,
-    username: "hotpot",
-    password: "1234",
-  },
+  { shopId: 1, username: "oden", password: "1234" },
+  { shopId: 2, username: "don", password: "1234" },
+  { shopId: 3, username: "breakfast", password: "1234" },
+  { shopId: 4, username: "drink", password: "1234" },
+  { shopId: 5, username: "hotpot", password: "1234" },
 ];
 
 const money = (n) => `NT$ ${Number(n || 0).toLocaleString()}`;
@@ -78,9 +59,7 @@ const sameMonth = (a, b) => {
 };
 
 const getSuggestedStartTime = (pickupTime, estimatedMinutes) => {
-  if (!pickupTime) {
-    return "未知";
-  }
+  if (!pickupTime) return "未知";
 
   const [hour, minute] = pickupTime.split(":").map(Number);
 
@@ -89,7 +68,6 @@ const getSuggestedStartTime = (pickupTime, estimatedMinutes) => {
   date.setHours(hour);
   date.setMinutes(minute);
   date.setSeconds(0);
-
   date.setMinutes(date.getMinutes() - estimatedMinutes);
 
   return date.toLocaleTimeString([], {
@@ -144,6 +122,44 @@ export default function VendorPage({
     );
   };
 
+  const getMinutesUntilPickup = (pickupTime) => {
+    if (!pickupTime) return 9999;
+
+    const [hour, minute] = pickupTime.split(":").map(Number);
+
+    const now = new Date();
+    const pickup = new Date();
+
+    pickup.setHours(hour);
+    pickup.setMinutes(minute);
+    pickup.setSeconds(0);
+
+    return Math.floor((pickup - now) / 60000);
+  };
+
+  const getUrgencyInfo = (pickupTime) => {
+    const minutes = getMinutesUntilPickup(pickupTime);
+
+    if (minutes <= 10) {
+      return {
+        className: "urgency-red",
+        text: minutes < 0 ? "🔴 已逾時" : "🔴 緊急",
+      };
+    }
+
+    if (minutes <= 20) {
+      return {
+        className: "urgency-yellow",
+        text: "🟡 即將到時",
+      };
+    }
+
+    return {
+      className: "urgency-green",
+      text: "🟢 尚有時間",
+    };
+  };
+
   const pendingOrders = useMemo(() => {
     return sortByPickupTime(
       vendorOrders.filter((order) => order.status === "已下單")
@@ -151,13 +167,23 @@ export default function VendorPage({
   }, [vendorOrders]);
 
   const preparingOrders = useMemo(() => {
-    return sortByPickupTime(
-      vendorOrders.filter((order) => order.status === "備餐中")
-    );
+    return [...vendorOrders]
+      .filter((order) => order.status === "備餐中")
+      .sort(
+        (a, b) =>
+          getMinutesUntilPickup(a.pickupTime) -
+          getMinutesUntilPickup(b.pickupTime)
+      );
   }, [vendorOrders]);
 
   const completedOrders = useMemo(() => {
-    return vendorOrders.filter((order) => order.status === "已完成");
+    return [...vendorOrders]
+      .filter((order) => order.status === "已完成")
+      .sort(
+        (a, b) =>
+          new Date(b.completedAt || b.createdAt) -
+          new Date(a.completedAt || a.createdAt)
+      );
   }, [vendorOrders]);
 
   const todayRevenue = useMemo(() => {
@@ -198,60 +224,60 @@ export default function VendorPage({
   }, [completedOrders]);
 
   const chartColors = [
-  "#FF6B35",
-  "#004E89",
-  "#00A86B",
-  "#F59E0B",
-  "#EF4444",
-  "#8B5CF6",
-  "#06B6D4",
-  "#F97316",
-  "#22C55E",
-  "#EC4899",
-];
+    "#FF6B35",
+    "#004E89",
+    "#00A86B",
+    "#F59E0B",
+    "#EF4444",
+    "#8B5CF6",
+    "#06B6D4",
+    "#F97316",
+    "#22C55E",
+    "#EC4899",
+  ];
 
-const productBarData = useMemo(() => {
-  return {
-    labels: productStats.map((item) => item.name),
-    datasets: [
-      {
-        label: "售出數量",
-        data: productStats.map((item) => item.qty),
-        backgroundColor: productStats.map(
-          (_, index) => chartColors[index % chartColors.length]
-        ),
-        borderRadius: 10,
+  const productBarData = useMemo(() => {
+    return {
+      labels: productStats.map((item) => item.name),
+      datasets: [
+        {
+          label: "售出數量",
+          data: productStats.map((item) => item.qty),
+          backgroundColor: productStats.map(
+            (_, index) => chartColors[index % chartColors.length]
+          ),
+          borderRadius: 10,
+        },
+      ],
+    };
+  }, [productStats]);
+
+  const revenuePieData = useMemo(() => {
+    return {
+      labels: productStats.map((item) => item.name),
+      datasets: [
+        {
+          label: "營收",
+          data: productStats.map((item) => item.revenue),
+          backgroundColor: productStats.map(
+            (_, index) => chartColors[index % chartColors.length]
+          ),
+          borderColor: "#FFFFFF",
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [productStats]);
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
       },
-    ],
-  };
-}, [productStats]);
-
-const revenuePieData = useMemo(() => {
-  return {
-    labels: productStats.map((item) => item.name),
-    datasets: [
-      {
-        label: "營收",
-        data: productStats.map((item) => item.revenue),
-        backgroundColor: productStats.map(
-          (_, index) => chartColors[index % chartColors.length]
-        ),
-        borderColor: "#FFFFFF",
-        borderWidth: 2,
-      },
-    ],
-  };
-}, [productStats]);
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "bottom",
     },
-  },
-};
+  };
 
   const updateOrderStatus = async (orderId, status) => {
     const targetOrder = orders.find((order) => order.id === orderId);
@@ -294,6 +320,12 @@ const chartOptions = {
         ))}
 
         <p>取餐時間：{order.pickupTime}</p>
+
+        {order.status === "備餐中" && (
+          <div className={`urgency-badge ${getUrgencyInfo(order.pickupTime).className}`}>
+            {getUrgencyInfo(order.pickupTime).text}
+          </div>
+        )}
 
         <p>
           預估備餐時間：
@@ -604,6 +636,20 @@ const chartOptions = {
           </a>
 
           <a
+            className={activeTab === "accepted" ? "active" : ""}
+            onClick={() => setActiveTab("accepted")}
+          >
+            已接單排程
+          </a>
+
+          <a
+            className={activeTab === "history" ? "active" : ""}
+            onClick={() => setActiveTab("history")}
+          >
+            歷史訂單
+          </a>
+
+          <a
             className={activeTab === "menu" ? "active" : ""}
             onClick={() => setActiveTab("menu")}
           >
@@ -647,65 +693,91 @@ const chartOptions = {
           <>
             <div className="top-banner">
               <div>
-                <span className="vendor-banner-label">Dashboard</span>
-                <h1>{currentShop.name}</h1>
-                <p>即時管理學生訂單與取餐狀態</p>
+                <span className="vendor-banner-label">Orders</span>
+                <h1>訂單管理</h1>
+                <p>查看尚未接單的學生訂單。</p>
               </div>
             </div>
 
             <div className="stats-grid">
               <div className="stat-card">
                 <div>
-                  <h3>目前訂單</h3>
-                  <p>{vendorOrders.length} 筆</p>
+                  <h3>待接單訂單</h3>
+                  <p>{pendingOrders.length} 筆</p>
                 </div>
               </div>
             </div>
 
-            <h2 className="section-title">即時訂單</h2>
+            <h2 className="section-title">待接單訂單</h2>
 
-            {vendorOrders.length === 0 ? (
+            {pendingOrders.length === 0 ? (
               <div className="empty-box">
-                目前沒有訂單
+                目前沒有待接單訂單
               </div>
             ) : (
-              <>
-                <div className="order-status-section">
-                  <h3>已下單</h3>
+              pendingOrders.map((order) => renderOrderCard(order))
+            )}
+          </>
+        )}
 
-                  {pendingOrders.length === 0 ? (
-                    <div className="empty-box small-empty">
-                      目前沒有已下單訂單
-                    </div>
-                  ) : (
-                    pendingOrders.map((order) => renderOrderCard(order))
-                  )}
+        {activeTab === "accepted" && (
+          <>
+            <div className="top-banner">
+              <div>
+                <span className="vendor-banner-label">Schedule</span>
+                <h1>已接單排程</h1>
+                <p>依照取餐時間由緊急到不急排列。</p>
+              </div>
+            </div>
+
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div>
+                  <h3>備餐中訂單</h3>
+                  <p>{preparingOrders.length} 筆</p>
                 </div>
+              </div>
+            </div>
 
-                <div className="order-status-section">
-                  <h3>備餐中</h3>
+            <h2 className="section-title">備餐中訂單</h2>
 
-                  {preparingOrders.length === 0 ? (
-                    <div className="empty-box small-empty">
-                      目前沒有備餐中訂單
-                    </div>
-                  ) : (
-                    preparingOrders.map((order) => renderOrderCard(order))
-                  )}
+            {preparingOrders.length === 0 ? (
+              <div className="empty-box">
+                目前沒有備餐中訂單
+              </div>
+            ) : (
+              preparingOrders.map((order) => renderOrderCard(order))
+            )}
+          </>
+        )}
+
+        {activeTab === "history" && (
+          <>
+            <div className="top-banner">
+              <div>
+                <span className="vendor-banner-label">History</span>
+                <h1>歷史訂單</h1>
+                <p>查看已完成訂單紀錄。</p>
+              </div>
+            </div>
+
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div>
+                  <h3>已完成訂單</h3>
+                  <p>{completedOrders.length} 筆</p>
                 </div>
+              </div>
+            </div>
 
-                <div className="order-status-section">
-                  <h3>已完成</h3>
+            <h2 className="section-title">已完成訂單</h2>
 
-                  {completedOrders.length === 0 ? (
-                    <div className="empty-box small-empty">
-                      目前沒有已完成訂單
-                    </div>
-                  ) : (
-                    completedOrders.map((order) => renderOrderCard(order))
-                  )}
-                </div>
-              </>
+            {completedOrders.length === 0 ? (
+              <div className="empty-box">
+                目前沒有歷史訂單
+              </div>
+            ) : (
+              completedOrders.map((order) => renderOrderCard(order))
             )}
           </>
         )}
@@ -749,6 +821,7 @@ const chartOptions = {
                 </div>
               </div>
             </div>
+
             {productStats.length > 0 && (
               <div className="sales-chart-grid">
                 <div className="sales-chart-card">
@@ -778,6 +851,7 @@ const chartOptions = {
                 </div>
               </div>
             )}
+
             <section className="chart-panel">
               <div className="orders-panel-header">
                 <div>

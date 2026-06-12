@@ -3714,3 +3714,26 @@ p {
   height: 320px;
   margin-top: 16px;
 }
+.urgency-badge {
+  display: inline-block;
+  margin: 12px 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.urgency-red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.urgency-yellow {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.urgency-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
