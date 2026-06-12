@@ -87,7 +87,7 @@ export default function StudentPage({
 
       <aside className={`student-drawer ${drawerOpen ? "open" : ""}`}>
         <div className="drawer-brand">
-          <h2>歸燕食堂</h2>
+          <h2>歸燕食巢</h2>
 
           {currentStudent && (
             <p className="student-login-info">
@@ -99,7 +99,6 @@ export default function StudentPage({
         <nav className="drawer-nav">
           <button onClick={() => scrollToSection("home")}>首頁</button>
           <button onClick={() => scrollToSection("categories")}>餐點分類</button>
-          <button onClick={() => scrollToSection("features")}>熱門推薦</button>
           <button onClick={() => scrollToSection("shops")}>店家列表</button>
 
           <button
@@ -139,7 +138,10 @@ export default function StudentPage({
       <div className="student-page">
         <header className="hero" id="home">
           <div className="hero-text">
-            <h1>歸燕食堂</h1>
+            <h1 className="student-brand-title">
+              <span>歸燕</span>
+              <span>食巢</span>
+            </h1>
 
             {currentStudent && (
               <p className="student-login-info">
@@ -174,7 +176,7 @@ export default function StudentPage({
 
         {!selectedShop ? (
           <>
-            <section className="search-panel">
+            <section className="search-panel home-search-panel">
               <input placeholder="搜尋餐點或店家，例如：丼飯、飲料、早餐" />
               <button>搜尋</button>
             </section>
@@ -227,22 +229,6 @@ export default function StudentPage({
                   <span className="category-icon">🍢</span>
                   <span>關東煮</span>
                 </button>
-              </div>
-            </section>
-
-            <section className="home-section" id="features">
-              <div className="feature-grid">
-                <div className="feature-card dark">
-                  <span className="feature-badge">🔥 今日熱門</span>
-                  <h3>下課前先點，到了直接拿</h3>
-                  <p>熱門時段可提前預約取餐，減少排隊等待時間。</p>
-                </div>
-
-                <div className="feature-card green">
-                  <span className="feature-badge">🎉 今日優惠</span>
-                  <h3>飲料加購優惠</h3>
-                  <p>點主餐加購飲料，享校園限定優惠。</p>
-                </div>
               </div>
             </section>
 

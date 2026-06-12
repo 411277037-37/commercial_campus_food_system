@@ -91,7 +91,8 @@ export default function VendorPage({
   vendorLogin,
   setVendorLogin,
 }) {
-  const [activeTab, setActiveTab] = useState("orders");
+  const [activeTab, setActiveTab] = useState("home");
+  const [homeOrderTab, setHomeOrderTab] = useState("pending");
 
   const [newFoodName, setNewFoodName] = useState("");
   const [newFoodPrice, setNewFoodPrice] = useState("");
@@ -397,7 +398,8 @@ export default function VendorPage({
     setVendorShopId(null);
     setVendorUsername("");
     setVendorPassword("");
-    setActiveTab("orders");
+    setActiveTab("home");
+    setHomeOrderTab("pending");
     setPage("login");
   };
 
@@ -629,17 +631,10 @@ export default function VendorPage({
 
         <nav>
           <a
-            className={activeTab === "orders" ? "active" : ""}
-            onClick={() => setActiveTab("orders")}
+            className={activeTab === "home" ? "active" : ""}
+            onClick={() => setActiveTab("home")}
           >
-            訂單管理
-          </a>
-
-          <a
-            className={activeTab === "accepted" ? "active" : ""}
-            onClick={() => setActiveTab("accepted")}
-          >
-            已接單排程
+            主頁
           </a>
 
           <a
@@ -689,67 +684,82 @@ export default function VendorPage({
           </button>
         </div>
 
-        {activeTab === "orders" && (
+        {activeTab === "home" && (
           <>
             <div className="top-banner">
               <div>
-                <span className="vendor-banner-label">Orders</span>
-                <h1>訂單管理</h1>
-                <p>查看尚未接單的學生訂單。</p>
+                <span className="vendor-banner-label">Home</span>
+                <h1>{currentShop.name}</h1>
+                <p>管理未接單訂單與已接單排程。</p>
               </div>
             </div>
 
             <div className="stats-grid">
               <div className="stat-card">
                 <div>
-                  <h3>待接單訂單</h3>
+                  <h3>未接單</h3>
                   <p>{pendingOrders.length} 筆</p>
                 </div>
               </div>
-            </div>
 
-            <h2 className="section-title">待接單訂單</h2>
-
-            {pendingOrders.length === 0 ? (
-              <div className="empty-box">
-                目前沒有待接單訂單
-              </div>
-            ) : (
-              pendingOrders.map((order) => renderOrderCard(order))
-            )}
-          </>
-        )}
-
-        {activeTab === "accepted" && (
-          <>
-            <div className="top-banner">
-              <div>
-                <span className="vendor-banner-label">Schedule</span>
-                <h1>已接單排程</h1>
-                <p>依照取餐時間由緊急到不急排列。</p>
-              </div>
-            </div>
-
-            <div className="stats-grid">
               <div className="stat-card">
                 <div>
-                  <h3>備餐中訂單</h3>
+                  <h3>已接單</h3>
                   <p>{preparingOrders.length} 筆</p>
                 </div>
               </div>
             </div>
 
-            <h2 className="section-title">備餐中訂單</h2>
+            <div className="vendor-home-tabs">
+              <button
+                className={homeOrderTab === "pending" ? "active" : ""}
+                onClick={() => setHomeOrderTab("pending")}
+              >
+                未接單
+              </button>
 
-            {preparingOrders.length === 0 ? (
-              <div className="empty-box">
-                目前沒有備餐中訂單
-              </div>
-            ) : (
-              preparingOrders.map((order) => renderOrderCard(order))
+              <button
+                className={homeOrderTab === "accepted" ? "active" : ""}
+                onClick={() => setHomeOrderTab("accepted")}
+              >
+                已接單排程
+              </button>
+            </div>
+
+            {homeOrderTab === "pending" && (
+              <section className="order-status-section">
+                <h2 className="section-title">未接單訂單</h2>
+
+                {pendingOrders.length === 0 ? (
+                  <div className="empty-box">
+                    目前沒有未接單訂單
+                  </div>
+                ) : (
+                  pendingOrders.map((order) => renderOrderCard(order))
+                )}
+              </section>
+            )}
+
+            {homeOrderTab === "accepted" && (
+              <section className="order-status-section">
+                <h2 className="section-title">已接單排程</h2>
+                <p className="section-subtitle">
+                  依照取餐時間由緊急到不急排列。
+                </p>
+
+                {preparingOrders.length === 0 ? (
+                  <div className="empty-box">
+                    目前沒有已接單訂單
+                  </div>
+                ) : (
+                  preparingOrders.map((order) => renderOrderCard(order))
+                )}
+              </section>
             )}
           </>
         )}
+
+        
 
         {activeTab === "history" && (
           <>
@@ -787,7 +797,7 @@ export default function VendorPage({
             <div className="page-topbar">
               <button
                 className="page-back-btn"
-                onClick={() => setActiveTab("orders")}
+                onClick={() => setActiveTab("home")}
                 aria-label="返回訂單管理"
               >
                 ←
@@ -887,7 +897,7 @@ export default function VendorPage({
             <div className="page-topbar">
               <button
                 className="page-back-btn"
-                onClick={() => setActiveTab("orders")}
+                onClick={() => setActiveTab("home")}
                 aria-label="返回訂單管理"
               >
                 ←
@@ -983,7 +993,7 @@ export default function VendorPage({
             <div className="page-topbar">
               <button
                 className="page-back-btn"
-                onClick={() => setActiveTab("orders")}
+                onClick={() => setActiveTab("home")}
                 aria-label="返回訂單管理"
               >
                 ←
