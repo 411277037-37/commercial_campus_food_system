@@ -3695,3 +3695,22 @@ p {
   outline: none;
   border-color: var(--primary);
 }
+.sales-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 35px;
+}
+
+.sales-chart-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+.sales-chart-box {
+  height: 320px;
+  margin-top: 16px;
+}

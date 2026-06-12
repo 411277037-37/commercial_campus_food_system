@@ -2,6 +2,25 @@ import { useMemo, useState } from "react";
 import VendorReviews from "./VendorReviews";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+import { Bar, Pie } from "react-chartjs-2";
+ChartJS.register(
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 const vendorAccounts = [
   {
@@ -177,6 +196,62 @@ export default function VendorPage({
 
     return Object.values(map).sort((a, b) => b.qty - a.qty);
   }, [completedOrders]);
+
+  const chartColors = [
+  "#FF6B35",
+  "#004E89",
+  "#00A86B",
+  "#F59E0B",
+  "#EF4444",
+  "#8B5CF6",
+  "#06B6D4",
+  "#F97316",
+  "#22C55E",
+  "#EC4899",
+];
+
+const productBarData = useMemo(() => {
+  return {
+    labels: productStats.map((item) => item.name),
+    datasets: [
+      {
+        label: "售出數量",
+        data: productStats.map((item) => item.qty),
+        backgroundColor: productStats.map(
+          (_, index) => chartColors[index % chartColors.length]
+        ),
+        borderRadius: 10,
+      },
+    ],
+  };
+}, [productStats]);
+
+const revenuePieData = useMemo(() => {
+  return {
+    labels: productStats.map((item) => item.name),
+    datasets: [
+      {
+        label: "營收",
+        data: productStats.map((item) => item.revenue),
+        backgroundColor: productStats.map(
+          (_, index) => chartColors[index % chartColors.length]
+        ),
+        borderColor: "#FFFFFF",
+        borderWidth: 2,
+      },
+    ],
+  };
+}, [productStats]);
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "bottom",
+    },
+  },
+};
 
   const updateOrderStatus = async (orderId, status) => {
     const targetOrder = orders.find((order) => order.id === orderId);
@@ -674,7 +749,35 @@ export default function VendorPage({
                 </div>
               </div>
             </div>
+            {productStats.length > 0 && (
+              <div className="sales-chart-grid">
+                <div className="sales-chart-card">
+                  <div className="orders-panel-header">
+                    <div>
+                      <h2>餐點銷售長條圖</h2>
+                      <p>比較各餐點售出數量。</p>
+                    </div>
+                  </div>
 
+                  <div className="sales-chart-box">
+                    <Bar data={productBarData} options={chartOptions} />
+                  </div>
+                </div>
+
+                <div className="sales-chart-card">
+                  <div className="orders-panel-header">
+                    <div>
+                      <h2>營收占比圓餅圖</h2>
+                      <p>查看各餐點對營收的貢獻比例。</p>
+                    </div>
+                  </div>
+
+                  <div className="sales-chart-box">
+                    <Pie data={revenuePieData} options={chartOptions} />
+                  </div>
+                </div>
+              </div>
+            )}
             <section className="chart-panel">
               <div className="orders-panel-header">
                 <div>
