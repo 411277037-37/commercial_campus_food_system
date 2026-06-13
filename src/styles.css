@@ -4280,3 +4280,80 @@ body:has(.student-profile-page) {
   flex-direction: column;
   gap: 14px;
 }
+.login-page,
+.vendor-login-page {
+  background-image: url("./assets/888-1.png");
+  background-size: 100% auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #eaf7df;
+}
+/* ===== Student Home / My Orders Header Background ===== */
+/* 首頁上方區塊 + 我的訂單上方區塊換成 888-1.png */
+
+.student-shell .hero,
+.student-orders-page .orders-hero,
+.student-orders-page .top-banner {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+    url("./assets/888-1.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  color: #ffffff !important;
+}
+
+/* 首頁上方文字變白 */
+.student-shell .hero h1,
+.student-shell .hero p,
+.student-shell .hero .student-login-info {
+  color: #ffffff !important;
+}
+
+/* 首頁上方按鈕改成半透明白色 */
+.student-shell .hero .back-btn {
+  background: rgba(255, 255, 255, 0.88) !important;
+  color: #111827 !important;
+}
+
+/* 我的訂單上方文字變白 */
+.student-orders-page .orders-hero h1,
+.student-orders-page .orders-hero p,
+.student-orders-page .orders-label,
+.student-orders-page .top-banner h1,
+.student-orders-page .top-banner p {
+  color: #ffffff !important;
+}
+
+/* 我的訂單整個頁面寬度跟學生首頁一致 */
+.student-orders-page {
+  max-width: 430px !important;
+  margin: 0 auto !important;
+}
+
+/* 我的訂單上方區塊縮小一點 */
+.student-orders-page .orders-hero,
+.student-orders-page .top-banner {
+  padding: 22px 18px !important;
+  border-radius: 0 0 22px 22px !important;
+  min-height: auto !important;
+  margin-bottom: 16px !important;
+}
+
+/* 我的訂單標題再縮小 */
+.student-orders-page .my-orders-title,
+.student-orders-page .orders-hero h1,
+.student-orders-page .top-banner h1 {
+  font-size: 24px !important;
+  line-height: 1.15 !important;
+  margin-bottom: 4px !important;
+}
+
+/* 我的訂單登入資訊 */
+.student-orders-page .my-orders-login,
+.student-orders-page .orders-hero p,
+.student-orders-page .top-banner p {
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+}
