@@ -27,11 +27,14 @@ export default function StudentOrders({
 
         <div>
           <span className="orders-label">My Orders</span>
-          <h1>我的訂單</h1>
-          <p>
-            查看目前訂單狀態、取餐號碼與預約時間。
-            {currentStudent && ` 目前登入：${currentStudent.studentId}`}
-          </p>
+
+          <h1 className="my-orders-title">我的訂單</h1>
+
+          {currentStudent && (
+            <p className="my-orders-login">
+              目前登入：{currentStudent.studentId}
+            </p>
+          )}
         </div>
       </div>
 

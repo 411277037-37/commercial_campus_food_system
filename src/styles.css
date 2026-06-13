@@ -4198,3 +4198,85 @@ body:has(.student-profile-page) {
   font-size: 12px;
   font-weight: 900;
 }
+/* ===== My Orders Page Compact Title ===== */
+/* 我的訂單頁面標題縮小 */
+
+.student-orders-page .my-orders-title {
+  font-size: 22px !important;
+  line-height: 1.2 !important;
+  margin-bottom: 4px !important;
+}
+
+.student-orders-page .my-orders-login {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+/* ===== Student Home Login Text No Wrap ===== */
+/* 首頁「目前登入：學生37號」不要換行 */
+
+.student-shell .hero-text .student-login-info {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  max-width: 100% !important;
+}
+/* ===== Review Card：留言與店家回覆分組框 ===== */
+
+.review-card,
+.review-item,
+.vendor-review-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+/* 客人留言區 */
+.review-card .review-comment,
+.review-item .review-comment,
+.vendor-review-card .review-comment {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* 店家回覆區 */
+.review-reply,
+.reply-box,
+.vendor-reply {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 12px;
+  color: #166534;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* 店家回覆標題 */
+.review-reply strong,
+.reply-box strong,
+.vendor-reply strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #15803d;
+}
+
+/* 多則留言之間更明顯分開 */
+.review-list,
+.vendor-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
