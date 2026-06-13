@@ -4451,20 +4451,20 @@ body:has(.student-profile-page) {
 
 /* 訂單數量 */
 .student-orders-page .orders-summary-card .small-number {
-  font-size: 24px !important;
+  font-size: 20px !important;
   font-weight: 950 !important;
 }
 
 /* 累積金額 */
 .student-orders-page .orders-summary-card .money-number {
-  font-size: 22px !important;
+  font-size: 20px !important;
   font-weight: 950 !important;
   white-space: nowrap !important;
 }
 
 /* 最新狀態 */
 .student-orders-page .orders-summary-card .status-number {
-  font-size: 23px !important;
+  font-size: 20px !important;
   font-weight: 950 !important;
   white-space: nowrap !important;
 }
@@ -4563,4 +4563,58 @@ body:has(.student-profile-page) {
 .status-badge.status-待取餐 {
   background: #dbeafe !important;
   color: #1d4ed8 !important;
+}
+/* ===== 我的訂單三個統計卡片：不顯示下方說明、上下更扁 ===== */
+
+.student-orders-page .orders-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  padding: 0 4px !important;
+}
+
+.student-orders-page .orders-summary-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 95px !important;
+  padding: 12px 10px !important;
+  border-radius: 24px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+}
+
+.student-orders-page .orders-summary-card span {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  font-weight: 800 !important;
+}
+
+.student-orders-page .orders-summary-card .orders-summary-main {
+  margin: 8px 0 0 !important;
+  color: #111827 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.05 !important;
+  word-break: keep-all !important;
+}
+
+.student-orders-page .orders-summary-card .small-number {
+  font-size: 24px !important;
+}
+
+.student-orders-page .orders-summary-card .money-number {
+  font-size: 22px !important;
+  white-space: nowrap !important;
+}
+
+.student-orders-page .orders-summary-card .status-number {
+  font-size: 23px !important;
+  white-space: nowrap !important;
 }
