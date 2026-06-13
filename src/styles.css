@@ -4190,7 +4190,7 @@ body:has(.student-profile-page) {
 .student-shell #shops .shop-preparing-count {
   position: absolute;
   right: 0;
-  top: 6px;
+  top: 10px;
   background: #dcfce7;
   color: #15803d;
   padding: 6px 10px;

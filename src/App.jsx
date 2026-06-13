@@ -126,17 +126,27 @@ export default function App() {
     }
   }, [shops]);
 
-  const updateShops = async (newShops) => {
-    setShops(newShops);
+  const updateShops = (value) => {
+    setShops((prevShops) => {
+      const newShops =
+        typeof value === "function" ? value(prevShops) : value;
 
-    await Promise.all(
-      newShops.map((shop) =>
-        setDoc(doc(db, "shops", String(shop.id)), {
-          ...shop,
-          image: "",
+      Promise.all(
+        newShops.map((shop) => {
+          const { image, ...shopData } = shop;
+
+          return setDoc(doc(db, "shops", String(shop.id)), {
+            ...shopData,
+            image: "",
+          });
         })
-      )
-    );
+      ).catch((error) => {
+        console.error("更新店家資料失敗：", error);
+        alert("店家資料更新失敗，請稍後再試");
+      });
+
+      return newShops;
+    });
   };
 
   const openMyOrders = () => {
