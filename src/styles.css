@@ -4468,3 +4468,57 @@ body:has(.student-profile-page) {
   font-weight: 950 !important;
   white-space: nowrap !important;
 }
+/* ===== 我的訂單：已完成訂單收合樣式 ===== */
+
+.student-orders-page .completed-order-card {
+  cursor: pointer !important;
+  transition: 0.2s ease !important;
+}
+
+.student-orders-page .completed-order-card.collapsed {
+  padding: 14px 16px !important;
+  border-radius: 18px !important;
+}
+
+.student-orders-page .completed-order-summary {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.student-orders-page .completed-order-summary .order-number {
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
+
+.student-orders-page .completed-order-summary h3 {
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.student-orders-page .completed-order-card.collapsed .status-badge {
+  font-size: 12px !important;
+  padding: 6px 10px !important;
+  white-space: nowrap !important;
+}
+
+.student-orders-page .completed-order-hint {
+  margin-top: 6px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #9ca3af !important;
+}
+
+.student-orders-page .completed-order-card.expanded {
+  padding: 18px !important;
+}
+
+.student-orders-page .completed-order-card.expanded .completed-order-hint {
+  margin-bottom: 12px !important;
+}
