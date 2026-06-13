@@ -4169,3 +4169,32 @@ body:has(.student-profile-page) {
     margin-top: 1px !important;
   }
 }
+/* ===== Student Shop Preparing Count ===== */
+
+.student-shell #shops .shop-card {
+  position: relative;
+}
+
+.student-shell #shops .shop-content {
+  position: relative;
+  padding-bottom: 28px;
+}
+
+.student-shell #shops .shop-type {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 2px 0;
+  font-weight: 700;
+}
+
+.student-shell #shops .shop-preparing-count {
+  position: absolute;
+  right: 0;
+  top: 6px;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}

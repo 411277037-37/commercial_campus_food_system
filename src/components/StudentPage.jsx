@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ReviewSection from "./ReviewSection";
 import StudentProfile from "./StudentProfile";
 
@@ -71,7 +71,14 @@ export default function StudentPage({
       if (order.status !== "備餐中") return false;
       if (!order.pickupTime) return false;
 
-      const orderDate = order.createdAt ? new Date(order.createdAt) : now;
+      let orderDate = now;
+
+      if (order.createdAt) {
+        orderDate =
+          typeof order.createdAt.toDate === "function"
+            ? order.createdAt.toDate()
+            : new Date(order.createdAt);
+      }
 
       const isToday =
         orderDate.getFullYear() === now.getFullYear() &&
@@ -81,8 +88,8 @@ export default function StudentPage({
       if (!isToday) return false;
 
       const [hour, minute] = order.pickupTime.split(":").map(Number);
-      const pickupDate = new Date();
 
+      const pickupDate = new Date();
       pickupDate.setHours(hour);
       pickupDate.setMinutes(minute);
       pickupDate.setSeconds(0);
@@ -265,11 +272,10 @@ export default function StudentPage({
               </div>
             </section>
 
-            
-
             <section className="home-section">
               <div className="notice-card">
                 <span>📢</span>
+
                 <div>
                   <strong>今日公告</strong>
                   <p>中午 12:00 - 12:40 為尖峰時段，建議提前預訂。</p>
@@ -300,11 +306,17 @@ export default function StudentPage({
                     <div className="shop-content">
                       <h3>{shop.name}</h3>
 
+                      <p className="shop-type">校園美食</p>
+
                       <p className="shop-rating">
                         {shop.rating > 0
                           ? `★★★★★ ${shop.rating}`
                           : "尚無評價"}
                       </p>
+
+                      <div className="shop-preparing-count">
+                        備餐中 {getOneHourPreparingCount(shop)} 單
+                      </div>
                     </div>
                   </div>
                 ))}
