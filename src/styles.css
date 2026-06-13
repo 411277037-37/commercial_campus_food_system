@@ -4681,3 +4681,75 @@ body:has(.student-profile-page) {
 .student-shell #categories .category-row {
   scrollbar-width: none !important;
 }
+/* ===== 學生首頁：店家列表縮小間距 ===== */
+
+.student-shell #shops.home-section {
+  margin-top: 18px !important;
+  padding-top: 0 !important;
+}
+
+.student-shell #shops .shop-grid {
+  gap: 5px !important;
+}
+
+.student-shell #shops .shop-card {
+  margin-bottom: 0 !important;
+  padding-bottom: 12px !important;
+}
+
+.student-shell #shops .shop-card img {
+  height: 135px !important;
+  object-fit: cover !important;
+}
+
+.student-shell #shops .shop-content {
+  padding-top: 10px !important;
+  padding-bottom: 4px !important;
+}
+
+.student-shell #shops .shop-content h3 {
+  margin-bottom: 4px !important;
+}
+
+.student-shell #shops .shop-type,
+.student-shell #shops .shop-rating {
+  margin: 2px 0 !important;
+  line-height: 1.25 !important;
+}
+/* ===== 學生首頁：餐點分類小圖示置中 ===== */
+
+.student-shell #categories .category-chip {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.student-shell #categories .category-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 auto 8px !important;
+  width: 48px !important;
+  height: 48px !important;
+  text-align: center !important;
+}
+
+.student-shell #categories .category-chip span {
+  text-align: center !important;
+}
+/* ===== 我的訂單：三個統計區塊文字置中 ===== */
+
+.student-orders-page .orders-summary-card {
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.student-orders-page .orders-summary-card span,
+.student-orders-page .orders-summary-card .orders-summary-main,
+.student-orders-page .orders-summary-card p {
+  width: 100% !important;
+  text-align: center !important;
+}
