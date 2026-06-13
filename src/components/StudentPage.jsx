@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ReviewSection from "./ReviewSection";
 import StudentProfile from "./StudentProfile";
 
@@ -56,6 +56,39 @@ export default function StudentPage({
         });
       }
     }, 120);
+  };
+
+  const getOneHourPreparingCount = (shop) => {
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+    return orders.filter((order) => {
+      const isSameShop = order.shopId
+        ? order.shopId === shop.id
+        : order.shop === shop.name;
+
+      if (!isSameShop) return false;
+      if (order.status !== "備餐中") return false;
+      if (!order.pickupTime) return false;
+
+      const orderDate = order.createdAt ? new Date(order.createdAt) : now;
+
+      const isToday =
+        orderDate.getFullYear() === now.getFullYear() &&
+        orderDate.getMonth() === now.getMonth() &&
+        orderDate.getDate() === now.getDate();
+
+      if (!isToday) return false;
+
+      const [hour, minute] = order.pickupTime.split(":").map(Number);
+      const pickupDate = new Date();
+
+      pickupDate.setHours(hour);
+      pickupDate.setMinutes(minute);
+      pickupDate.setSeconds(0);
+
+      return pickupDate <= oneHourLater;
+    }).length;
   };
 
   if (showProfile) {
@@ -192,18 +225,10 @@ export default function StudentPage({
               <div className="category-row">
                 <button
                   className="category-chip"
-                  onClick={() => scrollToShop("早餐店")}
+                  onClick={() => scrollToShop("關東煮")}
                 >
-                  <span className="category-icon">🍳</span>
-                  <span>早餐</span>
-                </button>
-
-                <button
-                  className="category-chip"
-                  onClick={() => scrollToShop("飲料店")}
-                >
-                  <span className="category-icon">🥤</span>
-                  <span>飲料</span>
+                  <span className="category-icon">🍢</span>
+                  <span>關東煮</span>
                 </button>
 
                 <button
@@ -216,50 +241,31 @@ export default function StudentPage({
 
                 <button
                   className="category-chip"
+                  onClick={() => scrollToShop("早餐店")}
+                >
+                  <span className="category-icon">🍳</span>
+                  <span>早餐店</span>
+                </button>
+
+                <button
+                  className="category-chip"
+                  onClick={() => scrollToShop("飲料店")}
+                >
+                  <span className="category-icon">🥤</span>
+                  <span>飲料店</span>
+                </button>
+
+                <button
+                  className="category-chip"
                   onClick={() => scrollToShop("鍋燒")}
                 >
                   <span className="category-icon">🍲</span>
                   <span>鍋燒</span>
                 </button>
-
-                <button
-                  className="category-chip"
-                  onClick={() => scrollToShop("關東煮")}
-                >
-                  <span className="category-icon">🍢</span>
-                  <span>關東煮</span>
-                </button>
               </div>
             </section>
 
-            <section className="home-section">
-              <div className="section-header">
-                <div>
-                  <h2 className="section-title">目前等待時間</h2>
-                  <p className="section-subtitle">依照店家尖峰狀況預估</p>
-                </div>
-              </div>
-
-              <div className="wait-grid">
-                <div className="wait-card">
-                  <h3>早餐店</h3>
-                  <p>目前訂單較少</p>
-                  <span className="wait-time">約 5 分鐘</span>
-                </div>
-
-                <div className="wait-card">
-                  <h3>飲料店</h3>
-                  <p>尖峰時段</p>
-                  <span className="wait-time">約 8 分鐘</span>
-                </div>
-
-                <div className="wait-card">
-                  <h3>丼飯</h3>
-                  <p>現點現做</p>
-                  <span className="wait-time">約 15 分鐘</span>
-                </div>
-              </div>
-            </section>
+            
 
             <section className="home-section">
               <div className="notice-card">

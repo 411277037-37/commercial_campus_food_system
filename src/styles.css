@@ -4095,3 +4095,90 @@ body:has(.student-profile-page) {
     margin-bottom: 14px !important;
   }
 }
+/* ===== Student Shop List Compact：店家列表更緊湊 ===== */
+/* 只調整學生端店家列表，不影響店家後台 */
+
+.student-shell #shops .section-header {
+  align-items: flex-start !important;
+  margin-bottom: 10px !important;
+}
+
+.student-shell #shops .section-title {
+  margin-bottom: 2px !important;
+}
+
+.student-shell #shops .section-subtitle {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 讓「共 5 間店家」往上一點，和店家列表標題對齊 */
+.student-shell #shops .section-link {
+  margin-top: 2px !important;
+  align-self: flex-start !important;
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+}
+
+/* 店家卡片彼此更靠近 */
+.student-shell #shops .shop-grid {
+  gap: 10px !important;
+}
+
+/* 每張店家卡片變矮一點 */
+.student-shell #shops .shop-card {
+  padding: 10px !important;
+  margin-bottom: 8px !important;
+  border-radius: 18px !important;
+  gap: 10px !important;
+}
+
+/* 店家圖片縮小一點 */
+.student-shell #shops .shop-card img {
+  height: 95px !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+}
+
+/* 店名、校園美食、評分間距縮小 */
+.student-shell #shops .shop-content {
+  padding-top: 6px !important;
+}
+
+.student-shell #shops .shop-content h3 {
+  font-size: 17px !important;
+  margin: 0 0 3px 0 !important;
+  line-height: 1.2 !important;
+}
+
+.student-shell #shops .shop-content p {
+  font-size: 13px !important;
+  margin: 2px 0 !important;
+  line-height: 1.3 !important;
+}
+
+.student-shell #shops .shop-rating {
+  font-size: 13px !important;
+  margin-top: 2px !important;
+}
+
+/* 手機版再壓縮一點 */
+@media (max-width: 480px) {
+  .student-shell #shops .shop-grid {
+    gap: 8px !important;
+  }
+
+  .student-shell #shops .shop-card {
+    padding: 9px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .student-shell #shops .shop-card img {
+    height: 88px !important;
+  }
+
+  .student-shell #shops .section-link {
+    margin-top: 1px !important;
+  }
+}
