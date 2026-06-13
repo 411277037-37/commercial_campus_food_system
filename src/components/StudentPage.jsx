@@ -23,6 +23,7 @@ export default function StudentPage({
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const closeDrawer = () => {
     setDrawerOpen(false);
@@ -57,7 +58,25 @@ export default function StudentPage({
       }
     }, 120);
   };
+  const handleSearch = () => {
+    const keyword = searchKeyword.trim();
 
+    if (!keyword) {
+      alert("請輸入要搜尋的店家名稱");
+      return;
+    }
+
+    const foundShop = shops.find((shop) =>
+      shop.name.includes(keyword)
+    );
+
+    if (!foundShop) {
+      alert("找不到符合的店家");
+      return;
+    }
+
+    scrollToShop(foundShop.name);
+  };
   const getOneHourPreparingCount = (shop) => {
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -217,8 +236,18 @@ export default function StudentPage({
         {!selectedShop ? (
           <>
             <section className="search-panel home-search-panel">
-              <input placeholder="搜尋餐點或店家，例如：丼飯、飲料、早餐" />
-              <button>搜尋</button>
+              <input
+                placeholder="搜尋店家，例如：關東煮、丼飯、早餐店"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+              />
+
+              <button onClick={handleSearch}>搜尋</button>
             </section>
 
             <section className="home-section" id="categories">

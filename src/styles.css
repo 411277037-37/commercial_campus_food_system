@@ -960,14 +960,7 @@ p {
   font-weight: 950;
 }
 
-.sidebar h2::after {
-  content: "店家後台";
-  display: block;
-  margin-top: 8px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 13px;
-  letter-spacing: 0;
-}
+
 
 .sidebar nav {
   display: flex;
@@ -4356,4 +4349,26 @@ body:has(.student-profile-page) {
   font-size: 13px !important;
   white-space: nowrap !important;
   margin: 0 !important;
+}
+/* ===== Fix Category Hover Border Cut ===== */
+/* 保留 hover 上移，但避免上方邊框被切掉 */
+
+.student-shell #categories {
+  overflow: visible !important;
+  padding-top: 8px !important;
+}
+
+.student-shell #categories .category-row {
+  overflow: visible !important;
+  padding-top: 12px !important;
+  padding-bottom: 6px !important;
+}
+
+.student-shell #categories .category-chip {
+  position: relative;
+  z-index: 1;
+}
+
+.student-shell #categories .category-chip:hover {
+  z-index: 5;
 }
