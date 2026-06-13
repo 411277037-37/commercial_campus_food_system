@@ -41,19 +41,31 @@ export default function StudentOrders({
       <section className="orders-summary-grid">
         <div className="orders-summary-card">
           <span>訂單數量</span>
-          <strong>{myOrders.length}</strong>
+
+          <div className="orders-summary-main small-number">
+            {myOrders.length}
+          </div>
+
           <p>目前累積訂單</p>
         </div>
 
         <div className="orders-summary-card">
           <span>累積金額</span>
-          <strong>NT$ {totalSpent}</strong>
+
+          <div className="orders-summary-main money-number">
+            NT$ {totalSpent}
+          </div>
+
           <p>本次使用紀錄</p>
         </div>
 
         <div className="orders-summary-card">
           <span>最新狀態</span>
-          <strong>{latestOrder ? latestOrder.status : "尚無訂單"}</strong>
+
+          <div className="orders-summary-main status-number">
+            {latestOrder ? latestOrder.status : "尚無訂單"}
+          </div>
+
           <p>{latestOrder ? latestOrder.shop : "尚未建立訂單"}</p>
         </div>
       </section>

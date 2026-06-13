@@ -4407,3 +4407,64 @@ body:has(.student-profile-page) {
 .review-section-panel {
   margin: 16px 0 18px;
 }
+/* ===== 我的訂單三個統計卡片：不橫向滾動、盡量加寬、上下變扁 ===== */
+
+.student-orders-page .orders-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  padding: 0 4px !important;
+}
+
+.student-orders-page .orders-summary-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 135px !important;
+  padding: 16px 10px !important;
+  border-radius: 24px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* 上方標題與下方說明 */
+.student-orders-page .orders-summary-card span,
+.student-orders-page .orders-summary-card p {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  line-height: 1.3 !important;
+  font-weight: 800 !important;
+}
+
+/* 主數字：20、NT$ 3145、已完成 */
+.student-orders-page .orders-summary-card .orders-summary-main {
+  margin: 8px 0 6px !important;
+  color: #111827 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.15 !important;
+  word-break: keep-all !important;
+}
+
+/* 訂單數量 */
+.student-orders-page .orders-summary-card .small-number {
+  font-size: 24px !important;
+  font-weight: 950 !important;
+}
+
+/* 累積金額 */
+.student-orders-page .orders-summary-card .money-number {
+  font-size: 22px !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+}
+
+/* 最新狀態 */
+.student-orders-page .orders-summary-card .status-number {
+  font-size: 23px !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+}
