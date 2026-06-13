@@ -34,6 +34,9 @@ export default function App() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pickupTime, setPickupTime] = useState("");
 
+  const [pendingOrder, setPendingOrder] = useState(null);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
   const [vendorShopId, setVendorShopId] = useState(null);
   const [vendorUsername, setVendorUsername] = useState("");
   const [vendorPassword, setVendorPassword] = useState("");
@@ -190,11 +193,15 @@ export default function App() {
     setSelectedShop(updatedShop);
   };
 
-  const submitOrder = async () => {
+  const submitOrder = () => {
     if (!selectedShop) return;
 
     if (!currentStudent) {
       alert("請先登入學生帳號");
+      return;
+    }
+
+    if (showConfirm) {
       return;
     }
 
@@ -222,6 +229,14 @@ export default function App() {
       0
     );
 
+    const unfinishedOrders = orders.filter((order) => {
+      const isSameShop =
+        String(order.shopId) === String(selectedShop.id) ||
+        order.shop === selectedShop.name;
+
+      return isSameShop && order.status !== "已完成";
+    });
+
     const newOrder = {
       id: Date.now(),
       studentId: currentStudent.studentId,
@@ -235,14 +250,7 @@ export default function App() {
       })),
       total,
       pickupTime,
-      estimatedMinutes:
-        orders.filter(
-          (order) =>
-            order.shopId === selectedShop.id &&
-            order.status !== "已完成"
-        ).length *
-          5 +
-        5,
+      estimatedMinutes: unfinishedOrders.length * 5 + 5,
       isNew: true,
       status: "已下單",
       number: Math.floor(Math.random() * 900 + 100),
@@ -250,12 +258,36 @@ export default function App() {
       completedAt: null,
     };
 
+    setPendingOrder(newOrder);
+    setShowConfirm(true);
+  };
+
+  const cancelPendingOrder = () => {
+    setPendingOrder(null);
+    setShowConfirm(false);
+  };
+
+  const confirmOrder = async () => {
+    if (!pendingOrder) return;
+
+    if (isSubmittingOrder) return;
+
     try {
-      await addDoc(collection(db, "orders"), newOrder);
-      setShowConfirm(true);
+      setIsSubmittingOrder(true);
+
+      await addDoc(collection(db, "orders"), pendingOrder);
+
+      alert("訂單已成功送出！");
+
+      setPendingOrder(null);
+      setShowConfirm(false);
+      setSelectedShop(null);
+      setPickupTime("");
     } catch (error) {
-      console.error("新增訂單失敗：", error);
+      console.error("訂單送出失敗：", error);
       alert("訂單送出失敗，請稍後再試");
+    } finally {
+      setIsSubmittingOrder(false);
     }
   };
 
@@ -312,6 +344,10 @@ export default function App() {
           increaseQty={increaseQty}
           decreaseQty={decreaseQty}
           submitOrder={submitOrder}
+          pendingOrder={pendingOrder}
+          confirmOrder={confirmOrder}
+          cancelPendingOrder={cancelPendingOrder}
+          isSubmittingOrder={isSubmittingOrder}
           setShowMyOrders={openMyOrders}
           setShops={updateShops}
           currentStudent={currentStudent}

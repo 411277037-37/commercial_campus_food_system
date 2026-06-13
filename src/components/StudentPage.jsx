@@ -16,6 +16,10 @@ export default function StudentPage({
   increaseQty,
   decreaseQty,
   submitOrder,
+  pendingOrder,
+  confirmOrder,
+  cancelPendingOrder,
+  isSubmittingOrder,
   setShowMyOrders,
   setShops,
   currentStudent,
@@ -85,9 +89,9 @@ export default function StudentPage({
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
 
     return orders.filter((order) => {
-      const isSameShop = order.shopId
-        ? order.shopId === shop.id
-        : order.shop === shop.name;
+      const isSameShop =
+        String(order.shopId) === String(shop.id) ||
+        order.shop === shop.name;
 
       if (!isSameShop) return false;
       if (order.status !== "備餐中") return false;
@@ -334,6 +338,7 @@ export default function StudentPage({
                     onClick={() => {
                       setSelectedShop(shop);
                       setShowReviews(false);
+                      cancelPendingOrder();
                     }}
                   >
                     <img src={shop.image} alt={shop.name} />
@@ -365,8 +370,8 @@ export default function StudentPage({
                 className="page-back-btn"
                 onClick={() => {
                   setSelectedShop(null);
-                  setShowConfirm(false);
                   setShowReviews(false);
+                  cancelPendingOrder();
                 }}
                 aria-label="返回店家列表"
               >
@@ -381,7 +386,13 @@ export default function StudentPage({
 
                 <button
                   className="review-toggle-btn"
-                  onClick={() => setShowReviews(!showReviews)}
+                  onClick={() => {
+                    if (!showReviews) {
+                      cancelPendingOrder();
+                    }
+
+                    setShowReviews(!showReviews);
+                  }}
                 >
                   {showReviews ? "關閉評論" : "查看評論"}
                 </button>
@@ -407,114 +418,112 @@ export default function StudentPage({
             ) : (
               <>
                 <div className="food-grid">
-              {selectedShop.foods.map((food, index) => (
-                <div className="food-card" key={index}>
-                  <div className="food-info">
-                    <h3>{food.name}</h3>
-                    <p>NT$ {food.price}</p>
+                  {selectedShop.foods.map((food, index) => (
+                    <div className="food-card" key={index}>
+                      <div className="food-info">
+                        <h3>{food.name}</h3>
+                        <p>NT$ {food.price}</p>
 
-                    {food.soldOut && (
-                      <div className="sold-out-badge">
-                        已售完
+                        {food.soldOut && (
+                          <div className="sold-out-badge">
+                            已售完
+                          </div>
+                        )}
+
+                        {food.note && <div className="food-note">{food.note}</div>}
                       </div>
-                    )}
 
-                    {food.note && <div className="food-note">{food.note}</div>}
-                  </div>
+                      <div className="qty-box">
+                        <button
+                          className="qty-btn"
+                          onClick={() => decreaseQty(index)}
+                        >
+                          -
+                        </button>
 
-                  <div className="qty-box">
-                    <button
-                      className="qty-btn"
-                      onClick={() => decreaseQty(index)}
-                    >
-                      -
-                    </button>
+                        <span>{food.qty}</span>
 
-                    <span>{food.qty}</span>
+                        <button
+                          className="qty-btn"
+                          disabled={food.soldOut}
+                          onClick={() => {
+                            if (food.soldOut) {
+                              return;
+                            }
 
-                    <button
-                      className="qty-btn"
-                      disabled={food.soldOut}
-                      onClick={() => {
-                        if (food.soldOut) {
-                          return;
-                        }
-
-                        increaseQty(index);
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
+                            increaseQty(index);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <div className="pickup-box">
-              <label>選擇預約取餐時間</label>
+                <div className="pickup-box">
+                  <label>選擇預約取餐時間</label>
 
-              <input
-                type="time"
-                value={pickupTime}
-                onChange={(e) => setPickupTime(e.target.value)}
-              />
-            </div>
-
-            <button className="submit-order-btn" onClick={submitOrder}>
-              送出訂單
-            </button>
-
-            {showConfirm && (
-              <div className="cart-panel">
-                <h2>訂單確認</h2>
-
-                {orders[orders.length - 1]?.items.map((item, index) => (
-                  <div className="cart-item" key={index}>
-                    <span>
-                      {item.name} × {item.qty}
-                    </span>
-                    <span>NT$ {item.price * item.qty}</span>
-                  </div>
-                ))}
-
-                <h3>取餐時間：{orders[orders.length - 1]?.pickupTime}</h3>
-                <h3>總金額：NT$ {orders[orders.length - 1]?.total}</h3>
-                <h3>號碼牌：A{orders[orders.length - 1]?.number}</h3>
-                <h3>
-                  預估備餐時間：
-                  {orders[orders.length - 1]?.estimatedMinutes} 分鐘
-                </h3>
-                <div className="confirm-actions">
-                  <button
-                    className="cancel-order-btn"
-                    onClick={() => {
-                      setShowConfirm(false);
-                      setOrders(orders.slice(0, -1));
-                    }}
-                  >
-                    返回修改
-                  </button>
-
-                  <button
-                    className="submit-order-btn"
-                    onClick={() => {
-                      alert("訂單已成功送出！");
-                      setShowConfirm(false);
-                      setSelectedShop(null);
-                      setPickupTime("");
-                      setShowReviews(false);
-                    }}
-                  >
-                    確認送出
-                  </button>
+                  <input
+                    type="time"
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                  />
                 </div>
-              </div>
+
+                <button
+                  className="submit-order-btn"
+                  onClick={submitOrder}
+                  disabled={showConfirm}
+                >
+                  {showConfirm ? "請確認訂單" : "送出訂單"}
+                </button>
+
+                {showConfirm && pendingOrder && (
+                  <div className="cart-panel">
+                    <h2>訂單確認</h2>
+
+                    {pendingOrder.items.map((item, index) => (
+                      <div className="cart-item" key={index}>
+                        <span>
+                          {item.name} × {item.qty}
+                        </span>
+                        <span>NT$ {item.price * item.qty}</span>
+                      </div>
+                    ))}
+
+                    <h3>取餐時間：{pendingOrder.pickupTime}</h3>
+                    <h3>總金額：NT$ {pendingOrder.total}</h3>
+                    <h3>號碼牌：A{pendingOrder.number}</h3>
+                    <h3>
+                      預估備餐時間：
+                      {pendingOrder.estimatedMinutes} 分鐘
+                    </h3>
+
+                    <div className="confirm-actions">
+                      <button
+                        className="cancel-order-btn"
+                        onClick={cancelPendingOrder}
+                        disabled={isSubmittingOrder}
+                      >
+                        返回修改
+                      </button>
+
+                      <button
+                        className="submit-order-btn"
+                        onClick={confirmOrder}
+                        disabled={isSubmittingOrder}
+                      >
+                        {isSubmittingOrder ? "送出中..." : "確認送出"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
-      </>
-    )}
-  </div>
-</div>
+      </div>
+    </div>
   );
 }
