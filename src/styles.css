@@ -4618,3 +4618,66 @@ body:has(.student-profile-page) {
   font-size: 23px !important;
   white-space: nowrap !important;
 }
+/* ===== 學生首頁：縮小餐點分類上下空白 ===== */
+
+.student-shell #categories.home-section {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.student-shell #categories .section-header {
+  margin-bottom: 14px !important;
+}
+
+.student-shell #categories .section-title {
+  margin-bottom: 6px !important;
+}
+
+.student-shell #categories .section-subtitle {
+  margin-bottom: 0 !important;
+}
+
+.student-shell #categories .category-row {
+  margin-top: 8px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+/* 縮小分類卡片本身高度 */
+.student-shell #categories .category-chip {
+  min-height: 88px !important;
+  padding: 14px 18px !important;
+}
+/* ===== 學生首頁：餐點分類恢復左右滑動 ===== */
+
+.student-shell #categories .category-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 14px !important;
+
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+
+  padding-top: 4px !important;
+  padding-bottom: 8px !important;
+
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.student-shell #categories .category-chip {
+  flex: 0 0 auto !important;
+  min-width: 130px !important;
+  min-height: 88px !important;
+}
+
+/* 隱藏橫向捲軸，但仍可左右滑 */
+.student-shell #categories .category-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+.student-shell #categories .category-row {
+  scrollbar-width: none !important;
+}
