@@ -18,6 +18,26 @@ export default function StudentOrders({
     0
   );
 
+  const getOrderProgressText = (order) => {
+    if (order.status === "已下單") {
+      return "等待接單";
+    }
+
+    if (order.status === "備餐中") {
+      return `${order.estimatedMinutes || 5} 分鐘`;
+    }
+
+    if (order.status === "待取餐") {
+      return "請前往取餐";
+    }
+
+    if (order.status === "已完成") {
+      return "已完成";
+    }
+
+    return order.status || "未知";
+  };
+
   const toggleCompletedOrder = (orderKey) => {
     setExpandedCompletedOrders((prev) => ({
       ...prev,
@@ -150,8 +170,8 @@ export default function StudentOrders({
                           </div>
 
                           <div>
-                            <span>預估備餐時間</span>
-                            <strong>已完成</strong>
+                            <span>訂單進度</span>
+                            <strong>{getOrderProgressText(order)}</strong>
                           </div>
 
                           <div>
@@ -175,10 +195,7 @@ export default function StudentOrders({
               }
 
               return (
-                <article
-                  className="student-order-card"
-                  key={orderKey}
-                >
+                <article className="student-order-card" key={orderKey}>
                   <div className="student-order-top">
                     <div>
                       <span className="order-number">A{order.number}</span>
@@ -206,10 +223,8 @@ export default function StudentOrders({
                     </div>
 
                     <div>
-                      <span>預估備餐時間</span>
-                      <strong>
-                        {`${order.estimatedMinutes || 5} 分鐘`}
-                      </strong>
+                      <span>訂單進度</span>
+                      <strong>{getOrderProgressText(order)}</strong>
                     </div>
 
                     <div>

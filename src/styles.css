@@ -4522,3 +4522,45 @@ body:has(.student-profile-page) {
 .student-orders-page .completed-order-card.expanded .completed-order-hint {
   margin-bottom: 12px !important;
 }
+/* ===== Order Status: 待取餐 ===== */
+
+.status-待取餐 {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+.ready-pickup-badge {
+  display: inline-block;
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.pickup-btn {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.pickup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+}
+
+.order-status-bar.status-待取餐 {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+.status-badge.status-待取餐 {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}

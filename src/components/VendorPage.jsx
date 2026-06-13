@@ -168,23 +168,19 @@ export default function VendorPage({
   }, [vendorOrders]);
 
   const preparingOrders = useMemo(() => {
-    return [...vendorOrders]
-      .filter((order) => order.status === "備餐中")
-      .sort(
-        (a, b) =>
-          getMinutesUntilPickup(a.pickupTime) -
-          getMinutesUntilPickup(b.pickupTime)
-      );
+    return sortByPickupTime(
+      vendorOrders.filter((order) => order.status === "備餐中")
+    );
+  }, [vendorOrders]);
+
+  const readyOrders = useMemo(() => {
+    return sortByPickupTime(
+      vendorOrders.filter((order) => order.status === "待取餐")
+    );
   }, [vendorOrders]);
 
   const completedOrders = useMemo(() => {
-    return [...vendorOrders]
-      .filter((order) => order.status === "已完成")
-      .sort(
-        (a, b) =>
-          new Date(b.completedAt || b.createdAt) -
-          new Date(a.completedAt || a.createdAt)
-      );
+    return vendorOrders.filter((order) => order.status === "已完成");
   }, [vendorOrders]);
 
   const todayRevenue = useMemo(() => {
@@ -288,14 +284,26 @@ export default function VendorPage({
       return;
     }
 
-    await updateDoc(doc(db, "orders", targetOrder.firebaseId), {
+    const now = new Date().toISOString();
+
+    const updateData = {
       status,
       isNew: false,
-      completedAt:
-        status === "已完成"
-          ? new Date().toISOString()
-          : targetOrder.completedAt,
-    });
+    };
+
+    if (status === "備餐中") {
+      updateData.acceptedAt = now;
+    }
+
+    if (status === "待取餐") {
+      updateData.readyAt = now;
+    }
+
+    if (status === "已完成") {
+      updateData.completedAt = now;
+    }
+
+    await updateDoc(doc(db, "orders", targetOrder.firebaseId), updateData);
   };
 
   const renderOrderCard = (order) => {
@@ -329,18 +337,29 @@ export default function VendorPage({
         )}
 
         <p>
-          預估備餐時間：
-          {order.status === "已完成"
-            ? "已完成"
-            : `${order.estimatedMinutes || 5} 分鐘`}
+          訂單狀態：
+          {order.status === "已下單" && "等待店家接單"}
+          {order.status === "備餐中" && `製作中，約 ${order.estimatedMinutes || 5} 分鐘`}
+          {order.status === "待取餐" && "餐點已完成，等待學生取餐"}
+          {order.status === "已完成" && "已完成"}
         </p>
 
-        {order.status !== "已完成" && (
+        {order.status === "已下單" && (
           <p>
             建議開始製作：
             {getSuggestedStartTime(
               order.pickupTime,
               order.estimatedMinutes || 5
+            )}
+          </p>
+        )}
+
+        {order.status === "備餐中" && (
+          <p>
+            預估完成時間：
+            {getSuggestedStartTime(
+              order.pickupTime,
+              0
             )}
           </p>
         )}
@@ -360,9 +379,18 @@ export default function VendorPage({
           {order.status === "備餐中" && (
             <button
               className="finish-btn"
+              onClick={() => updateOrderStatus(order.id, "待取餐")}
+            >
+              完成製作
+            </button>
+          )}
+
+          {order.status === "待取餐" && (
+            <button
+              className="pickup-btn"
               onClick={() => updateOrderStatus(order.id, "已完成")}
             >
-              完成
+              學生已取餐
             </button>
           )}
         </div>
@@ -690,7 +718,7 @@ export default function VendorPage({
               <div>
                 <span className="vendor-banner-label">Home</span>
                 <h1>{currentShop.name}</h1>
-                <p>管理未接單訂單與已接單排程。</p>
+                <p>管理未接單、備餐中與待取餐訂單。</p>
               </div>
             </div>
 
@@ -704,8 +732,15 @@ export default function VendorPage({
 
               <div className="stat-card">
                 <div>
-                  <h3>已接單</h3>
+                  <h3>備餐中</h3>
                   <p>{preparingOrders.length} 筆</p>
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div>
+                  <h3>待取餐</h3>
+                  <p>{readyOrders.length} 筆</p>
                 </div>
               </div>
             </div>
@@ -722,7 +757,14 @@ export default function VendorPage({
                 className={homeOrderTab === "accepted" ? "active" : ""}
                 onClick={() => setHomeOrderTab("accepted")}
               >
-                已接單排程
+                備餐中
+              </button>
+
+              <button
+                className={homeOrderTab === "ready" ? "active" : ""}
+                onClick={() => setHomeOrderTab("ready")}
+              >
+                待取餐
               </button>
             </div>
 
@@ -742,17 +784,34 @@ export default function VendorPage({
 
             {homeOrderTab === "accepted" && (
               <section className="order-status-section">
-                <h2 className="section-title">已接單排程</h2>
+                <h2 className="section-title">備餐中</h2>
                 <p className="section-subtitle">
-                  依照取餐時間由緊急到不急排列。
+                  已接單並正在製作中的訂單。
                 </p>
 
                 {preparingOrders.length === 0 ? (
                   <div className="empty-box">
-                    目前沒有已接單訂單
+                    目前沒有備餐中訂單
                   </div>
                 ) : (
                   preparingOrders.map((order) => renderOrderCard(order))
+                )}
+              </section>
+            )}
+
+            {homeOrderTab === "ready" && (
+              <section className="order-status-section">
+                <h2 className="section-title">待取餐</h2>
+                <p className="section-subtitle">
+                  餐點已完成，學生取餐後請點擊「學生已取餐」完成訂單。
+                </p>
+
+                {readyOrders.length === 0 ? (
+                  <div className="empty-box">
+                    目前沒有待取餐訂單
+                  </div>
+                ) : (
+                  readyOrders.map((order) => renderOrderCard(order))
                 )}
               </section>
             )}
