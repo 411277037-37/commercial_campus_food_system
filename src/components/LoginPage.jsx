@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const studentAccounts = Array.from(
   { length: 45 },
@@ -20,24 +22,61 @@ export default function LoginPage({
   const [studentId, setStudentId] = useState("");
   const [studentPassword, setStudentPassword] = useState("");
 
-  const handleStudentLogin = () => {
-    const found = studentAccounts.find(
-      (account) =>
-        account.studentId === studentId &&
-        account.password === studentPassword
+  const handleStudentLogin = async () => {
+    const trimmedStudentId = studentId.trim();
+    const trimmedPassword = studentPassword.trim();
+
+    const defaultAccount = studentAccounts.find(
+      (account) => account.studentId === trimmedStudentId
     );
 
-    if (!found) {
+    if (!defaultAccount) {
       alert("學生帳號或密碼錯誤");
       return;
     }
 
-    setCurrentStudent({
-      ...found,
-      nickname: `學生${found.studentId.slice(-2)}號`
-    });
+    try {
+      const studentRef = doc(db, "students", trimmedStudentId);
+      const studentSnap = await getDoc(studentRef);
 
-    setPage("student");
+      let studentData;
+
+      if (studentSnap.exists()) {
+        studentData = studentSnap.data();
+      } else {
+        if (trimmedPassword !== defaultAccount.password) {
+          alert("學生帳號或密碼錯誤");
+          return;
+        }
+
+        studentData = {
+          studentId: trimmedStudentId,
+          password: "0000",
+          nickname: `學生${trimmedStudentId.slice(-2)}號`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        await setDoc(studentRef, studentData);
+      }
+
+      if (studentData.password !== trimmedPassword) {
+        alert("學生帳號或密碼錯誤");
+        return;
+      }
+
+      setCurrentStudent({
+        studentId: studentData.studentId,
+        password: studentData.password,
+        nickname:
+          studentData.nickname || `學生${studentData.studentId.slice(-2)}號`,
+      });
+
+      setPage("student");
+    } catch (error) {
+      console.error("學生登入失敗：", error);
+      alert("登入失敗，請稍後再試");
+    }
   };
 
   return (
@@ -59,6 +98,11 @@ export default function LoginPage({
           placeholder="密碼，預設 0000"
           value={studentPassword}
           onChange={(e) => setStudentPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleStudentLogin();
+            }
+          }}
         />
 
         <button

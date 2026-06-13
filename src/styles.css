@@ -4372,3 +4372,38 @@ body:has(.student-profile-page) {
 .student-shell #categories .category-chip:hover {
   z-index: 5;
 }
+.profile-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 22px 0;
+}
+/* ===== Student Review Toggle Button ===== */
+
+.shop-detail-title-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.review-toggle-btn {
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+}
+
+.review-toggle-btn:hover {
+  transform: translateY(-2px);
+}
+
+.review-section-panel {
+  margin: 16px 0 18px;
+}

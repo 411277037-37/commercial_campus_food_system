@@ -24,6 +24,7 @@ export default function StudentPage({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [showReviews, setShowReviews] = useState(false);
 
   const closeDrawer = () => {
     setDrawerOpen(false);
@@ -58,6 +59,7 @@ export default function StudentPage({
       }
     }, 120);
   };
+
   const handleSearch = () => {
     const keyword = searchKeyword.trim();
 
@@ -77,6 +79,7 @@ export default function StudentPage({
 
     scrollToShop(foundShop.name);
   };
+
   const getOneHourPreparingCount = (shop) => {
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -328,7 +331,10 @@ export default function StudentPage({
                     id={`shop-${shop.name}`}
                     className="shop-card"
                     key={shop.id}
-                    onClick={() => setSelectedShop(shop)}
+                    onClick={() => {
+                      setSelectedShop(shop);
+                      setShowReviews(false);
+                    }}
                   >
                     <img src={shop.image} alt={shop.name} />
 
@@ -360,15 +366,25 @@ export default function StudentPage({
                 onClick={() => {
                   setSelectedShop(null);
                   setShowConfirm(false);
+                  setShowReviews(false);
                 }}
                 aria-label="返回店家列表"
               >
                 ←
               </button>
 
-              <div className="page-topbar-title">
-                <h2>{selectedShop.name}</h2>
-                <p>選擇餐點並預約取餐時間</p>
+              <div className="page-topbar-title shop-detail-title-row">
+                <div>
+                  <h2>{selectedShop.name}</h2>
+                  <p>選擇餐點並預約取餐時間</p>
+                </div>
+
+                <button
+                  className="review-toggle-btn"
+                  onClick={() => setShowReviews(!showReviews)}
+                >
+                  {showReviews ? "關閉評論" : "查看評論"}
+                </button>
               </div>
             </div>
 
@@ -379,7 +395,18 @@ export default function StudentPage({
               </div>
             )}
 
-            <div className="food-grid">
+            {showReviews ? (
+              <div className="review-section-panel">
+                <ReviewSection
+                  selectedShop={selectedShop}
+                  shops={shops}
+                  setShops={setShops}
+                  currentStudent={currentStudent}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="food-grid">
               {selectedShop.foods.map((food, index) => (
                 <div className="food-card" key={index}>
                   <div className="food-info">
@@ -437,13 +464,6 @@ export default function StudentPage({
               送出訂單
             </button>
 
-            <ReviewSection
-              selectedShop={selectedShop}
-              shops={shops}
-              setShops={setShops}
-              currentStudent={currentStudent}
-            />
-
             {showConfirm && (
               <div className="cart-panel">
                 <h2>訂單確認</h2>
@@ -464,7 +484,6 @@ export default function StudentPage({
                   預估備餐時間：
                   {orders[orders.length - 1]?.estimatedMinutes} 分鐘
                 </h3>
-
                 <div className="confirm-actions">
                   <button
                     className="cancel-order-btn"
@@ -483,6 +502,7 @@ export default function StudentPage({
                       setShowConfirm(false);
                       setSelectedShop(null);
                       setPickupTime("");
+                      setShowReviews(false);
                     }}
                   >
                     確認送出
@@ -492,7 +512,9 @@ export default function StudentPage({
             )}
           </>
         )}
-      </div>
-    </div>
+      </>
+    )}
+  </div>
+</div>
   );
 }
